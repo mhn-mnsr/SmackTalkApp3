@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const User = require('../models/user');
+
 
 
 router.get('/', (req,res)=>{
@@ -24,5 +26,26 @@ router.post('/register',(req,res)=>{
     //validation errors
     let errors = req.validationErrors()
     if (errors) res.render('register', {title: 'Register', errors:errors})
+    else{
+        User.findOne({'local.username': username}, (err,user)=>{
+            if (err) return done(err)
+            if (user) return done(null,false, req.flash('signupMessage', `${username} already exists, try something else!`))
+            else{
+                let newUser = new User({
+                    email: email,
+                    username: username,
+                    password: password
+                })
+                try{
+                    User.createUser(newUser,(err,user)=>{
+                        if (err) throw err
+                    })
+                    req.flash('success_msg',`${username} has been created!`)
+                    res.redirect('/')
+                }
+                catch (err){}
+            }
+        })
+    }
 })
 module.exports = router;

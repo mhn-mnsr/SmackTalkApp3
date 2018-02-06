@@ -1,5 +1,3 @@
-import { isMaster } from 'cluster';
-
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const UserSchema = mongoose.Schema({
@@ -8,7 +6,7 @@ const UserSchema = mongoose.Schema({
     firstName: { type: String },
     password: { type: String },
     _teams: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Team' }],
-    _messages: [{ type: Schema.Types.ObjectId, ref: 'Message' }]
+    _messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }]
 }, { timestamps: true })
 
 UserSchema.pre('save', function (next) {
