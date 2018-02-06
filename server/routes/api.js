@@ -93,4 +93,28 @@ let ensureAuthenticated = (req, res, next) => {
         res.render('login');
     }
 }
+
+router.post('/updateProfile', (req,res)=> {
+    let firstName = req.body.firstName
+    let lastName = req.body.lastName
+    let username = req.body.username
+
+    req.checkBody('firstName', 'Please enter your first name').notEmpty()
+    req.checkBody('lastName', 'Please enter your last name').notEmpty()
+    req.checkBody('username', 'Please enter your username').notEmpty()
+    
+    let errors = req.validationErrors()
+    User.findByIdAndUpdate(req.user._id, {$set:{'firstName': firstName, 'username': username, 'lastName': lastName}}, (err, user)=> {
+        if (err) throw (err)
+        req.flash('success_msg', 'Profile updated successfully')
+        res.render('login')
+    })
+})
+
+router.get('/getProfile', ensureAuthenticated, (req, res)=> {
+    User.getUserById(req.user._id, (err, user) => {
+        res.json(user)    
+    })
+})
+
 module.exports = router;
