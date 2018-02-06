@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', (req,res)=>{
-    res.render('index',{title:'SmackTalk'})
+    res.render('login',{title:'login'})
 })
 
 router.get('/register', (req,res)=>{
-    res.send('PUBLIC ROUTE')
+    res.render('register',{title:'register'})
 })
 
 router.get('/login', (req,res)=>{
