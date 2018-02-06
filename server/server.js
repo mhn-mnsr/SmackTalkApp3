@@ -30,6 +30,7 @@ app.set('view engine', '.hbs');
 app.use('/public',express.static(path.join(__dirname, 'public')));
 app.use('/js',express.static(path.join(__dirname, 'public/js')));
 app.use('/css',express.static(path.join(__dirname, 'public/css')));
+app.use('/img',express.static(path.join(__dirname, 'public/img')));
 
 app.use(bodyParser.json())
 app.use(express.static(__dirname + '/client/dist'));
@@ -39,6 +40,22 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser())
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(expressValidator({
+	errorFormatter: function(param, msg, value) {
+		var namespace = param.split('.')
+		, root    = namespace.shift()
+		, formParam = root;
+  
+	  while(namespace.length) {
+		formParam += '[' + namespace.shift() + ']';
+	  }
+	  return {
+		param : formParam,
+		msg   : msg,
+		value : value
+	  };
+	}
+  }));  
 app.use(flash());
 app.use(function (req, res, next) {
 	res.locals.success_msg = req.flash('success_msg');
