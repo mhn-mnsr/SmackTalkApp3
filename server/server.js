@@ -28,6 +28,9 @@ app.engine('.hbs', exphbs({
 app.set('view engine', '.hbs');
 
 app.use('/public',express.static(path.join(__dirname, 'public')));
+app.use('/js',express.static(path.join(__dirname, 'public/js')));
+app.use('/css',express.static(path.join(__dirname, 'public/css')));
+
 app.use(bodyParser.json())
 app.use(express.static(__dirname + '/client/dist'));
 app.use(session({secret: 'codingdojorocks', saveUninitialized: true, resave: true}));

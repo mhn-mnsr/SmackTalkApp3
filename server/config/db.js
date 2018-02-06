@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-mongoose.connect('mongodb://localhost/smacktalk');
+mongoose.connect('mongodb://localhost/sta3');
 
 
 const db = mongoose.connection;
