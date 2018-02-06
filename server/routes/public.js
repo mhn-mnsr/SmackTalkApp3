@@ -10,7 +10,7 @@ router.get('/register', (req,res)=>{
 })
 
 router.get('/login', (req,res)=>{
-    res.send('PUBLIC ROUTE')
+    res.render('login',{title:'login'})
 })
 
 module.exports = router;
