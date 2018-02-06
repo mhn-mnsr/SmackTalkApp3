@@ -4,6 +4,7 @@ const UserSchema = mongoose.Schema({
     username: { type: String },
     email: { type: String },
     firstName: { type: String },
+    lastName: {type: String},
     password: { type: String },
     _teams: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Team' }],
     _messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }]
