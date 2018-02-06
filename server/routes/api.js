@@ -6,11 +6,11 @@ const User = require('../models/user');
 
 
 
-router.get('/', (req,res)=>{
+router.get('/', (req, res) => {
     res.send('API ROUTE')
 })
 
-router.post('/register',(req,res)=>{
+router.post('/register', (req, res) => {
     //variables
     let email = req.body.email
     let username = req.body.username
@@ -20,32 +20,77 @@ router.post('/register',(req,res)=>{
     req.checkBody('email', 'Please enter your email').notEmpty()
     req.checkBody('username', 'Please enter your username').notEmpty()
     req.checkBody('email', 'Please enter a valid email').isEmail()
-    req.checkBody('username', 'Minimum length is 4, Maximum is 10').isLength({min:4,max:10})
+    req.checkBody('username', 'Minimum length is 4, Maximum is 10').isLength({ min: 4, max: 10 })
     req.checkBody('password', 'Your password and your confirmed password should match').equals(confirmPassword)
-    req.checkBody('password', 'Password should be at least 6 characters').isLength({min:6})
+    req.checkBody('password', 'Password should be at least 6 characters').isLength({ min: 6 })
     //validation errors
     let errors = req.validationErrors()
-    if (errors) res.render('register', {title: 'Register', errors:errors})
-    else{
-        User.findOne({'local.username': username}, (err,user)=>{
+    if (errors) res.render('register', { title: 'Register', errors: errors })
+    else {
+        User.findOne({ 'local.username': username }, (err, user) => {
             if (err) return done(err)
-            if (user) return done(null,false, req.flash('signupMessage', `${username} already exists, try something else!`))
-            else{
+            if (user) return done(null, false, req.flash('signupMessage', `${username} already exists, try something else!`))
+            else {
                 let newUser = new User({
                     email: email,
                     username: username,
                     password: password
                 })
-                try{
-                    User.createUser(newUser,(err,user)=>{
+                try {
+                    User.createUser(newUser, (err, user) => {
                         if (err) throw err
                     })
-                    req.flash('success_msg',`${username} has been created!`)
+                    req.flash('success_msg', `${username} has been created!`)
                     res.redirect('/')
                 }
-                catch (err){}
+                catch (err) { }
             }
         })
     }
 })
+
+passport.use(new LocalStrategy(
+    function (username, password, done) {
+        
+        User.getUserByUsername(username, function (err, user) {
+            if (err) throw err;
+            if (!user) {
+                return done(null, false, { message: 'Unknown User' });
+            }
+            User.comparePassword(password, user.password, function (err, isMatch) {
+                if (err) throw err;
+                if (isMatch) {
+                    console.log('password match')
+                    return done(null, user);
+                } else {
+                    return done(null, false, { message: 'Invalid password' });
+                }
+            });
+        });
+    }));
+
+passport.serializeUser(function (user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function (id, done) {
+    User.getUserById(id, function (err, user) {
+        done(err, user);
+    });
+});
+
+router.post('/login',
+	passport.authenticate('local', { successRedirect: '/auth/home', failureRedirect: '/', failureFlash: true }),
+	function (req, res) {
+		res.redirect('/')
+	});
+
+let ensureAuthenticated = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return next();
+    } else {
+        req.flash('error_msg', 'You are not logged in');
+        res.render('login');
+    }
+}
 module.exports = router;
