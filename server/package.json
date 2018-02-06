@@ -10,11 +10,13 @@
   "author": "Maheen Mansoor",
   "license": "MIT",
   "dependencies": {
+    "cookie-parser": "^1.4.3",
     "express": "^4.16.2",
     "express-session": "^1.15.6",
     "express-validator": "^4.3.0",
     "mongodb": "^3.0.2",
     "mongoose": "^5.0.3",
-    "passport": "^0.4.0"
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0"
   }
 }
