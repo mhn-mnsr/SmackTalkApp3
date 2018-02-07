@@ -140,10 +140,5 @@ router.get('/logout', (req, res)=> {
     req.flash('success_msg', 'You are logged out');
     res.redirect('/');
 })
-// router.get('/home', ensureAuthenticated, (req, res) => {
-//     User.getUserById(req.user._id, (err, user) => {
-//         res.json(user)
-//     })
-// })
 
 module.exports = router;
