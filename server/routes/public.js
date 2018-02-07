@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', (req,res)=>{
-    res.render('login',{title:'login'})
+    res.render('login',{title:'Home'})
 })
 
 router.get('/register', (req,res)=>{
@@ -10,7 +10,7 @@ router.get('/register', (req,res)=>{
 })
 
 router.get('/login', (req,res)=>{
-    res.send('PUBLIC ROUTE')
+    res.render('login',{title:'login'})
 })
 
 module.exports = router;

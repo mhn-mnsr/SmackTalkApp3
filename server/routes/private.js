@@ -7,7 +7,7 @@ let ensureAuthenticated = (req, res, next) =>{
 		return next();
 	} else {
 		req.flash('error_msg', 'You are not logged in');
-		res.render('login');
+		res.redirect('login');
 	}
 }
 router.get('/', (req,res)=>{
@@ -15,7 +15,7 @@ router.get('/', (req,res)=>{
 })
 
 router.get('/home', ensureAuthenticated, (req,res)=>{
-    res.send('You are home')
+    res.render('home', {title: 'Success'})
 })
 
 

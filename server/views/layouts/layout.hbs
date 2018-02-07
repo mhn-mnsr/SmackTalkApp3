@@ -13,20 +13,84 @@
     <script src="/js/bootstrap.js"></script>
     <title>SmackTalk - {{title}}</title>
 </head>
+
 <body>
-    {{>nav}}
     <div class="container">
         <div class="col-lg-12">
             {{#if success_msg}}
-                <div class="alert alert-success">{{success_msg}}</div>
-            {{/if}}
-            {{#if error_msg}}
-                <div class="alert alert-danger">{{error_msg}}</div>
-            {{/if}} 
-            {{#if error}}
-                <div class="alert alert-danger">{{error}}</div>
-            {{/if}} 
-            {{{body}}}
+            <div class="alert alert-success">{{success_msg}}</div>
+            {{/if}} {{#if error_msg}}
+            <div class="alert alert-danger">{{error_msg}}</div>
+            {{/if}} {{#if error}}
+            <div class="alert alert-danger">{{error}}</div>
+            {{/if}} {{{body}}}
+                {{#if user}}
+            <nav>
+                <a href="/auth/home">Dashboard</a>
+                <a href="/logout">Logout</a>
+                <button type="button" class="btn btn-outline-success my-2 my-sm-0" data-toggle="modal" data-target="#exampleModal">View Profile</button>
+                {{else}}
+                <a href="/login">Login</a>
+                <a href="/register">Register</a>
+            </nav>
+                {{/if}}
         </div>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        {{#if success_msg}}
+        <div class="alert alert-success">{{success_msg}}</div>
+        {{/if}} {{#if error_msg}}
+        <div class="alert alert-danger">{{error_msg}}</div>
+        {{/if}}
+        <div class="modal-dialog" role="document">
+            <form method="post" action="/api/updateProfile">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Update Information</h5>
+
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-row">
+                            <div class="col-md-4 mb-3">
+                                <label for="validationCustom01">First name</label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" placeholder="First name" value="Mark">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="validationCustom02">Last name</label>
+                                <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Last name" value="Otto">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="validationCustomUsername">Username</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" name="username" id="currentUsername" placeholder="Username" aria-describedby="inputGroupPrepend">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+        </div>
+        </form>
+    </div>
+
 </body>
+
+
+
 </html>
+
+<script>
+  $(document).ready(() => {
+    $.getJSON('/api/getProfile', data => {
+      document.getElementById('firstName').value = data.firstName || ''
+      document.getElementById('lastName').value = data.lastName || ''
+      document.getElementById('currentUsername').value = data.username
+    })
+  })
+</script>

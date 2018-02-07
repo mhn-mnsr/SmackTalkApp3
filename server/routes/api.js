@@ -41,7 +41,7 @@ router.post('/register', (req, res) => {
                         if (err) throw err
                     })
                     req.flash('success_msg', `${username} has been created!`)
-                    res.redirect('/')
+                    res.redirect('login')
                 }
                 catch (err) { }
             }
@@ -51,7 +51,7 @@ router.post('/register', (req, res) => {
 
 passport.use(new LocalStrategy(
     function (username, password, done) {
-        
+
         User.getUserByUsername(username, function (err, user) {
             if (err) throw err;
             if (!user) {
@@ -60,7 +60,6 @@ passport.use(new LocalStrategy(
             User.comparePassword(password, user.password, function (err, isMatch) {
                 if (err) throw err;
                 if (isMatch) {
-                    console.log('password match')
                     return done(null, user);
                 } else {
                     return done(null, false, { message: 'Invalid password' });
@@ -80,10 +79,10 @@ passport.deserializeUser(function (id, done) {
 });
 
 router.post('/login',
-	passport.authenticate('local', { successRedirect: '/auth/home', failureRedirect: '/', failureFlash: true }),
-	function (req, res) {
-		res.redirect('/')
-	});
+    passport.authenticate('local', { successRedirect: '/auth/home', failureRedirect: '/', failureFlash: true }),
+    function (req, res) {
+        res.render('home')
+    });
 
 let ensureAuthenticated = (req, res, next) => {
     if (req.isAuthenticated()) {
@@ -94,7 +93,7 @@ let ensureAuthenticated = (req, res, next) => {
     }
 }
 
-router.post('/updateProfile', (req,res)=> {
+router.post('/updateProfile', (req, res) => {
     let firstName = req.body.firstName
     let lastName = req.body.lastName
     let username = req.body.username
@@ -102,19 +101,49 @@ router.post('/updateProfile', (req,res)=> {
     req.checkBody('firstName', 'Please enter your first name').notEmpty()
     req.checkBody('lastName', 'Please enter your last name').notEmpty()
     req.checkBody('username', 'Please enter your username').notEmpty()
-    
+
     let errors = req.validationErrors()
-    User.findByIdAndUpdate(req.user._id, {$set:{'firstName': firstName, 'username': username, 'lastName': lastName}}, (err, user)=> {
-        if (err) throw (err)
-        req.flash('success_msg', 'Profile updated successfully')
-        res.render('login')
+    if (errors) res.render('register', { title: 'Register', errors: errors})
+    else {
+        User.getUserByUsername(username , (err, user) => {
+            console.log("@@@", user)
+            console.log("!!!", user)
+            if (err) throw (err)
+            if (user && user._id.toString() !== req.user._id.toString()){
+                console.log("this is the user:", user)
+                req.flash('error_msg', 'Username already exists')
+                console.log(req.flash)
+                res.redirect('/')}
+            else {
+                
+                    User.findByIdAndUpdate(req.user._id, { $set: { 'firstName': firstName, 'username': username, 'lastName': lastName } }, (err, user) => {
+                        if (err) throw (err)
+                        req.flash('success_msg', 'Profile updated successfully')
+                        console.log(req.flash)
+                        res.redirect('/')
+                    
+                    })
+                }
+        })
+    }
+})
+
+
+router.get('/getProfile', ensureAuthenticated, (req, res) => {
+    User.getUserById(req.user._id, (err, user) => {
+        res.json(user)
     })
 })
 
-router.get('/getProfile', ensureAuthenticated, (req, res)=> {
-    User.getUserById(req.user._id, (err, user) => {
-        res.json(user)    
-    })
+router.get('/logout', (req, res)=> {
+    req.logout();
+    req.flash('success_msg', 'You are logged out');
+    res.redirect('/');
 })
+// router.get('/home', ensureAuthenticated, (req, res) => {
+//     User.getUserById(req.user._id, (err, user) => {
+//         res.json(user)
+//     })
+// })
 
 module.exports = router;
