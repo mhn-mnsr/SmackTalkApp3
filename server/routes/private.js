@@ -15,7 +15,7 @@ router.get('/', (req,res)=>{
 })
 
 router.get('/home', ensureAuthenticated, (req,res)=>{
-    res.render('home', {title: 'Success'})
+    res.render('home', {title: 'Home'})
 })
 
 
