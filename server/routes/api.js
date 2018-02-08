@@ -112,14 +112,12 @@ router.post('/updateProfile', (req, res) => {
             if (user && user._id.toString() !== req.user._id.toString()){
                 console.log("this is the user:", user)
                 req.flash('error_msg', 'Username already exists')
-                console.log(req.flash)
                 res.redirect('/')}
             else {
                 
                     User.findByIdAndUpdate(req.user._id, { $set: { 'firstName': firstName, 'username': username, 'lastName': lastName } }, (err, user) => {
                         if (err) throw (err)
                         req.flash('success_msg', 'Profile updated successfully')
-                        console.log(req.flash)
                         res.redirect('/')
                     
                     })
@@ -141,4 +139,41 @@ router.get('/logout', (req, res)=> {
     res.redirect('/');
 })
 
+router.post('/createTeam', ensureAuthenticated, (req, res, next)=> {
+    const newTeam = new newTeam({
+        teamName: req.body.teamName,
+        description: req.body.description,
+        _members: req.body.members
+    })
+
+    req.checkBody('newTeam.teamName', 'Please enter your team name').notEmpty()
+    let errors = req.validationErrors()
+    if (errors) res.render('/home', {errors: errors})
+    newTeam.save(err, team=> {
+        if (err) throw (err)
+        else {
+            User.findByIdAndUpdate(req.user._id, {$set: {'_teams': newTeam._id}}, (err, user)=> {
+                if (err) throw (err)
+                else {
+                    Team.createTeam(newTeam, (err, team)=> {
+                        if (err) throw (err)
+                    })
+                    try{
+                        req.flash('success_msg', `${teamName} has been created!`)
+                        res.redirect('home')
+
+                    }
+                    catch (err) {}
+                }
+            })
+        }
+    })
+
+})
+
+router.get('/getTeams', ensureAuthenticated, (req, res)=> {
+    Team.find({}, (err, team)=> {
+        res.json(team);
+    })
+})
 module.exports = router;

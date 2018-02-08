@@ -18,7 +18,9 @@ router.get('/home', ensureAuthenticated, (req,res)=>{
     res.render('home', {title: 'Home'})
 })
 
-
+router.get('/createTeam', ensureAuthenticated, (req, res)=> {
+	res.render('createTeam', {title: 'Create a Team'})
+})
 
 
 module.exports = router;

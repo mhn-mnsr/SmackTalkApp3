@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const User = require('/User');
 const TeamSchema = mongoose.Schema({
     teamName: { type: String},
     teamDescription: { type: String },
@@ -8,4 +9,15 @@ const TeamSchema = mongoose.Schema({
 
 mongoose.model('Team', TeamSchema);
 
-var Team = mongoose.model('Team');
+const Team = module.exports = mongoose.model('Team', TeamSchema);
+
+module.exports.createTeam = function(newTeam, callback){
+    newTeam.save(newTeam, callback)}
+
+module.exports.getTeamById = (id, callback) => {
+    Team.findById(id, callback)
+}
+
+module.exports.updateTeam = (id, callback) => {
+    
+}
