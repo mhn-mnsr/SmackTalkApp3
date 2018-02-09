@@ -3,12 +3,11 @@ const router = express.Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('../models/user');
+const Team = require('../models/team');
 
 
 
-router.get('/', (req, res) => {
-    res.send('API ROUTE')
-})
+router.get('/', (req, res) => { res.send('API ROUTE') })
 
 router.post('/register', (req, res) => {
     //variables
@@ -41,7 +40,7 @@ router.post('/register', (req, res) => {
                         if (err) throw err
                     })
                     req.flash('success_msg', `${username} has been created!`)
-                    res.redirect('login')
+                    res.redirect('/login')
                 }
                 catch (err) { }
             }
@@ -89,7 +88,7 @@ let ensureAuthenticated = (req, res, next) => {
         return next();
     } else {
         req.flash('error_msg', 'You are not logged in');
-        res.render('login');
+        res.redirect('/');//deal with you later :@
     }
 }
 
@@ -103,27 +102,31 @@ router.post('/updateProfile', (req, res) => {
     req.checkBody('username', 'Please enter your username').notEmpty()
 
     let errors = req.validationErrors()
-    if (errors) res.render('register', { title: 'Register', errors: errors})
+    if (errors) res.render('register', { title: 'Register', errors: errors })
     else {
-        User.getUserByUsername(username , (err, user) => {
-            console.log("@@@", user)
-            console.log("!!!", user)
+        User.getUserByUsername(username, (err, user) => {
             if (err) throw (err)
-            if (user && user._id.toString() !== req.user._id.toString()){
-                console.log("this is the user:", user)
+            if (user && user._id.toString() !== req.user._id.toString()) {
                 req.flash('error_msg', 'Username already exists')
-                res.redirect('/')}
+                res.redirect('/')
+            }
             else {
-                
-                    User.findByIdAndUpdate(req.user._id, { $set: { 'firstName': firstName, 'username': username, 'lastName': lastName } }, (err, user) => {
-                        if (err) throw (err)
-                        req.flash('success_msg', 'Profile updated successfully')
-                        res.redirect('/')
-                    
-                    })
-                }
+
+                User.findByIdAndUpdate(req.user._id, { $set: { 'firstName': firstName, 'username': username, 'lastName': lastName } }, (err, user) => {
+                    if (err) throw (err)
+                    req.flash('success_msg', 'Profile updated successfully')
+                    res.redirect('/')
+
+                })
+            }
         })
     }
+})
+
+router.get('/allUsers', ensureAuthenticated, (req, res) => {
+    User.find({}, (err, user) => {
+        res.json(user);
+    })
 })
 
 
@@ -133,47 +136,49 @@ router.get('/getProfile', ensureAuthenticated, (req, res) => {
     })
 })
 
-router.get('/logout', (req, res)=> {
-    req.logout();
-    req.flash('success_msg', 'You are logged out');
-    res.redirect('/');
-})
+router.post('/createTeam', ensureAuthenticated, (req, res) => {
+    let _ml = req.body.ml
+    _ml = _ml.split(',')
+    _ml.splice(0, 1)
 
-router.post('/createTeam', ensureAuthenticated, (req, res, next)=> {
-    const newTeam = new newTeam({
-        teamName: req.body.teamName,
-        description: req.body.description,
-        _members: req.body.members
-    })
-
-    req.checkBody('newTeam.teamName', 'Please enter your team name').notEmpty()
+    req.checkBody('teamName', 'Please enter your team name').notEmpty()
     let errors = req.validationErrors()
-    if (errors) res.render('/home', {errors: errors})
-    newTeam.save(err, team=> {
-        if (err) throw (err)
-        else {
-            User.findByIdAndUpdate(req.user._id, {$set: {'_teams': newTeam._id}}, (err, user)=> {
-                if (err) throw (err)
-                else {
-                    Team.createTeam(newTeam, (err, team)=> {
-                        if (err) throw (err)
-                    })
-                    try{
-                        req.flash('success_msg', `${teamName} has been created!`)
-                        res.redirect('home')
-
+    if (errors) res.render('home', { errors: errors })
+    else {
+        Team.getTeamByName(req.body.teamName, (err, team) => {
+            if (err) throw (err)
+            if (team) {
+                req.flash('error_msg', `${req.body.teamName} has already been used, please try another one`)
+                res.redirect('/auth/createTeam')
+            } else {
+                const newTeam = new Team({
+                    _adminMembers: req.user._id,
+                    teamName: req.body.teamName,
+                    teamDescription: req.body.description,
+                    _members: _ml
+                })
+                Team.createTeam(newTeam, (err, Team) => {
+                    if (err) throw (err)
+                    else {
+                        for (user in _ml) {
+                            User.findByIdAndUpdate(_ml[user], { $addToSet: { _teams: newTeam._id } })
+                        }
+                        req.flash('success_msg', `${req.body.teamName} has been created!`)
+                        res.redirect('/auth/home')
                     }
-                    catch (err) {}
-                }
-            })
-        }
-    })
-
+                })
+            }
+        })
+    }
 })
 
-router.get('/getTeams', ensureAuthenticated, (req, res)=> {
-    Team.find({}, (err, team)=> {
-        res.json(team);
+
+router.get('/getUserTeams', ensureAuthenticated, (req, res) => {
+    Team.getTeamsByUserId(req.user._id,(err,teams)=>{
+        if (err) throw err
+        else {
+            res.json(teams)
+        }
     })
 })
 module.exports = router;

@@ -1,11 +1,12 @@
-<form>
-    <input type="text" name="teamName">
-    <input type="text" name="teamDescription">
-    <input type="text" name="_members">
+ <form action="/api/createTeam" method="post">
+ Team Name:
+<input type="text" name="teamName"> Team Description:
+<input type="text" name="description"> Select members:
+<input type="text" name="_members" id="members">
+<button type="button" onclick="addMember()">Add</button>
+<input type='text' id='ml' name="ml" style="visibility:hidden;">
+<ul id="membersList" name="membersList">
+</ul>
+<button type="submit">Go!</button>
 </form>
-
-{{!-- <script>
-    $(document).ready(()=> {
-        $.getJson('/api/')
-    })
-</script> --}}
+<script src="/js/createTeam.js"><{{!}}/script>

@@ -1,11 +1,4 @@
-{{#if user}}
-<p id="greeting">{{data.firstName}}</p>
-{{/if}}
-<script>
-    $(document).ready(()=>{
-        $.getJSON('/api/getProfile', data=>{
-            console.log(data.firstName)
-            document.getElementById("greeting").innerHTML = data.firstName
-        })
-    })
-</script>
+{{!-- {{#if user}} --}}
+<p id="greeting"></p>
+{{!-- {{/if}} --}}
+<script src="/js/home.js"><{{!}}/script>
