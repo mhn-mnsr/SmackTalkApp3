@@ -28,4 +28,20 @@ router.get('/logout', (req, res) => {
     res.redirect('/');
 })
 
+router.get('/manageTeam', ensureAuthenticated, (req, res)=> {
+	res.render('manageTeam', {title: 'Team Manager'})
+})
+
+router.get('/usersTeams', ensureAuthenticated, (req,res)=> {
+	res.render('usersTeams', {title: 'My Teams'})
+})
+
+router.get('/joinTeam', ensureAuthenticated, (req, res)=> {
+	res.render('joinTeam', {title: 'Join Team'})
+})
+
+router.get('/joinRequests', ensureAuthenticated, (req, res)=> {
+	res.render('joinRequests', {title: 'Join Team'})
+})
+
 module.exports = router;

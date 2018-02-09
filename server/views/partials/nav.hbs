@@ -13,18 +13,27 @@
       </li>
       {{#if user}}
       <li class="nav-item">
-          <a class="nav-link" href="#">Manage Teams</a>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="/auth/manageTeam" role="button" aria-haspopup="true" aria-expanded="false">Manage Teams</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="/auth/usersTeams">My Teams</a>
+            <a class="dropdown-item" href="/auth/joinTeam">Join Team</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="/auth/joinRequests">Join Team Requests</a>
+          </div>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/auth/createTeam">Create Team</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/auth/logout">logout</a>
-        </li>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/auth/createTeam">Create Team</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/auth/logout">logout</a>
+      </li>
       {{else}}
-        <li class="nav-item">
-          <a class="nav-link" href="/login">Login</a>
-        </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/login">Login</a>
+      </li>
       {{/if}}
     </ul>
     {{#if user}}

@@ -181,4 +181,10 @@ router.get('/getUserTeams', ensureAuthenticated, (req, res) => {
         }
     })
 })
+
+// router.post('/manageTeam', ensureAuthenticated, (req,res)=> {
+//     res.render()
+// })
 module.exports = router;
+
+
