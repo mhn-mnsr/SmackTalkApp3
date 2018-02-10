@@ -17,7 +17,10 @@ const routes_setter = require('./config/routes.js');
 const r_public = require('./routes/public')
 const r_private = require('./routes/private')
 const r_api = require('./routes/api')
+const requestIp = require('request-ip');
+
 require('./config/db.js');
+
 
 app.set('views', path.join(__dirname, 'views'));
 app.engine('.hbs', exphbs({
@@ -33,6 +36,7 @@ app.use('/css',express.static(path.join(__dirname, 'public/css')));
 app.use('/img',express.static(path.join(__dirname, 'public/img')));
 
 app.use(bodyParser.json())
+app.use(requestIp.mw())
 app.use(express.static(__dirname + '/client/dist'));
 app.use(session({secret: 'codingdojorocks', saveUninitialized: true, resave: true}));
 app.use(bodyParser.json());

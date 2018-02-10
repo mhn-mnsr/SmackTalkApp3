@@ -1,5 +1,14 @@
 const mongoose = require('mongoose');
 // const User = require('./User');
+let User;
+
+if (mongoose.models.User) {
+  User = mongoose.model('User');
+} else {
+  User = mongoose.model('User', userSchema);
+}
+
+module.exports = User;
 const TeamSchema = mongoose.Schema({
     teamName: { type: String},
     teamDescription: { type: String },

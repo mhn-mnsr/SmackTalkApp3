@@ -175,6 +175,7 @@ router.post('/createTeam', ensureAuthenticated, (req, res) => {
 
 router.get('/getUserTeams', ensureAuthenticated, (req, res) => {
     Team.getTeamsByUserId(req.user._id,(err,teams)=>{
+        console.log(teams)
         if (err) throw err
         else {
             res.json(teams)
