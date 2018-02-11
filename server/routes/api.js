@@ -142,6 +142,8 @@ router.post('/createTeam', ensureAuthenticated, (req, res) => {
     _ml.splice(0, 1)
 
     req.checkBody('teamName', 'Please enter your team name').notEmpty()
+    // req.checkBody('description', 'Please add description').notEmpty()
+    // req.checkBody('_ml', 'Please add members').notEmpty()
     let errors = req.validationErrors()
     if (errors) res.render('home', { errors: errors })
     else {
@@ -175,7 +177,7 @@ router.post('/createTeam', ensureAuthenticated, (req, res) => {
 
 router.get('/getUserTeams', ensureAuthenticated, (req, res) => {
     Team.getTeamsByUserId(req.user._id,(err,teams)=>{
-        console.log(teams)
+        console.log(req.user._id)
         if (err) throw err
         else {
             res.json(teams)
@@ -183,6 +185,14 @@ router.get('/getUserTeams', ensureAuthenticated, (req, res) => {
     })
 })
 
+router.get('/getTeamMembers', ensureAuthenticated, (req, res)=> {
+    Team.find({_adminMembers: req.user._id},(err, team)=>{
+        if (err) throw err
+        else {
+            res.json(team)
+        }
+    } )
+})
 // router.post('/manageTeam', ensureAuthenticated, (req,res)=> {
 //     res.render()
 // })

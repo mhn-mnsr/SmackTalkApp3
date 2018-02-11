@@ -37,6 +37,9 @@ module.exports.getTeamsByUserId = (id,callback)=>{
     User.findById(id,callback)
 }
 
+module.exports.getTeamsMembers= (members, callback)=>{
+    Team.findOne(id, callback)
+}
 // module.exports.updateTeam = (id, callback) => {
 
 // }
