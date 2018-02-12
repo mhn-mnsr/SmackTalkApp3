@@ -33,6 +33,18 @@ let register = function(Handlebars) {
         },
         vue: function(options){
             return options.fn()
+        },
+        isAdmin: function(uid,adminMembers){
+            let admin = '<p>Admin</p>'
+            if( arguments.length <2){
+                throw new Error('This wrong sir')
+            }
+            for(member in adminMembers){
+                if(adminMembers[member] == uid.toString()) {
+                    return '<i class="fas fa-key"></i>'
+                }
+            }
+            return `<i class="fas fa-trash" id=${uid} style="cursor:pointer"></i>`
         }
 };
 

@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose')
+const Team = require('../models/Team')
 
 
 let ensureAuthenticated = (req, res, next) =>{
@@ -7,7 +9,7 @@ let ensureAuthenticated = (req, res, next) =>{
 		return next();
 	} else {
 		req.flash('error_msg', 'You are not logged in');
-		res.redirect('login');
+		res.redirect('../login');
 	}
 }
 router.get('/', (req,res)=>{
@@ -28,12 +30,11 @@ router.get('/logout', (req, res) => {
     res.redirect('/');
 })
 
-router.get('/manageTeam', ensureAuthenticated, (req, res)=> {
-	res.render('manageTeam', {title: 'Team Manager'})
-})
-
 router.get('/usersTeams', ensureAuthenticated, (req,res)=> {
-	res.render('usersTeams', {title: 'My Teams'})
+	Team.getAdminTeams(req.user._id,(err,data)=>{
+        if (err) throw err
+        res.render('usersTeams', {title: 'Team Manager',data:data})
+    })
 })
 
 router.get('/joinTeam', ensureAuthenticated, (req, res)=> {

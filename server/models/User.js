@@ -9,10 +9,12 @@ const UserSchema = mongoose.Schema({
     _teams: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Team', default:[] }],
     _messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }]
 }, { timestamps: true })
-
-
-const User = module.exports = mongoose.model('User', UserSchema);
-
+let User
+if (!mongoose.models.User)
+    User = module.exports = mongoose.model('User', UserSchema);
+else
+    User = mongoose.model('User')
+module.exports = UserSchema
 module.exports.createUser = function(newUser, callback){
 	bcrypt.genSalt(10, function(err, salt) {
 	    bcrypt.hash(newUser.password, salt, function(err, hash) {

@@ -1,14 +1,5 @@
 const mongoose = require('mongoose');
-// const User = require('./User');
-let User;
-
-if (mongoose.models.User) {
-  User = mongoose.model('User');
-} else {
-  User = mongoose.model('User', userSchema);
-}
-
-module.exports = User;
+const User = require('../models/User');
 const TeamSchema = mongoose.Schema({
     teamName: { type: String},
     teamDescription: { type: String },
@@ -16,30 +7,42 @@ const TeamSchema = mongoose.Schema({
     _members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     _pendingMembers:[{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     _message: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
-}, {timestamp: true});
+}, {timestamp: true})
 
-mongoose.model('Team', TeamSchema);
+if (!mongoose.models.Team)
+    Team = module.exports = mongoose.model('Team', TeamSchema);
+else    
+    Team = mongoose.model('Team');
 
-const Team = module.exports = mongoose.model('Team', TeamSchema);
-
-// module.exports.createTeam = function(newTeam, callback){
-//     newTeam.save(callback)}
+module.exports = TeamSchema
 
 module.exports.createTeam = (newTeam, callback)=>{
-    newTeam.save(callback)}
-
+    newTeam.save(callback)
+}
 
 module.exports.getTeamByName = (teamName, callback) => {
     let query = {teamName: teamName}
     Team.findOne(query, callback)
 }
+
 module.exports.getTeamsByUserId = (id,callback)=>{
     User.findById(id,callback)
 }
 
-module.exports.getTeamsMembers= (members, callback)=>{
-    Team.findOne(id, callback)
+module.exports.getAdminTeams = (id,callback) => {
+    Team.find({_adminMembers: id})
+        .select('_id _adminMembers _members _pendingMembers teamName')
+        .populate('_members')
+        .exec(callback)
 }
-// module.exports.updateTeam = (id, callback) => {
+module.exports.findByTId = (id,callback) => {
+    Team.findById(id,callback)
+}
 
+// module.exports.findByTIdAndUpdate = (tid,update,callback) =>{
+//     Team.findByIdAndUpdate(tid,update,callback)
 // }
+
+module.exports.findByTIdAndUpdate = (query,update,callback) =>{
+    Team.findAndUpdate(query,update,callback)
+}

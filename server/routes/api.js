@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const mongoose = require('mongoose');
 const User = require('../models/user');
 const Team = require('../models/team');
 
@@ -92,6 +93,16 @@ let ensureAuthenticated = (req, res, next) => {
     }
 }
 
+router.get('/user', (req, res) => {
+    res.json({
+        _id: req.user._id,
+        username: req.user.username,
+        email: req.user.email,
+        firstName: req.user.firstName,
+        lastName: req.user.lastName
+    })
+})
+
 router.post('/updateProfile', (req, res) => {
     let firstName = req.body.firstName
     let lastName = req.body.lastName
@@ -140,7 +151,7 @@ router.post('/createTeam', ensureAuthenticated, (req, res) => {
     let _ml = req.body.ml
     _ml = _ml.split(',')
     _ml.splice(0, 1)
-
+    _ml.unshift(req.user._id.toString())
     req.checkBody('teamName', 'Please enter your team name').notEmpty()
     // req.checkBody('description', 'Please add description').notEmpty()
     // req.checkBody('_ml', 'Please add members').notEmpty()
@@ -163,8 +174,11 @@ router.post('/createTeam', ensureAuthenticated, (req, res) => {
                     if (err) throw (err)
                     else {
                         for (user in _ml) {
-                            User.findByIdAndUpdate(_ml[user], { $addToSet: { _teams: newTeam._id } })
+                            User.findByIdAndUpdate(_ml[user], { $push: { _teams: newTeam._id } }, (err, doc) => {
+                                if (err) throw err
+                            })
                         }
+
                         req.flash('success_msg', `${req.body.teamName} has been created!`)
                         res.redirect('/auth/home')
                     }
@@ -174,28 +188,38 @@ router.post('/createTeam', ensureAuthenticated, (req, res) => {
     }
 })
 
-
-router.get('/getUserTeams', ensureAuthenticated, (req, res) => {
-    Team.getTeamsByUserId(req.user._id,(err,teams)=>{
-        console.log(req.user._id)
+router.get('/teamManager', ensureAuthenticated, (req, res) => {
+    Team.getAdminTeams(req.user._id, (err, data) => {
         if (err) throw err
-        else {
-            res.json(teams)
-        }
+        res.json(data)
     })
 })
 
-router.get('/getTeamMembers', ensureAuthenticated, (req, res)=> {
-    Team.find({_adminMembers: req.user._id},(err, team)=>{
+router.get('/deleteUserFromTeam/:uid/:tid', (req, res) => {
+    let uid = req.params.uid
+    let tid = req.params.tid
+    Team.findByTId(tid, (err, data) => {
         if (err) throw err
         else {
-            res.json(team)
+            for (user in data._adminMembers) {
+                if (data._adminMembers[user] == req.user._id.toString()) {
+                    Team.findByTIdAndUpdate({_id:tid}, { $pull: { _members: uid } },{ multi: true }, (err, data) => {
+                        if (err) throw err
+                        else {
+                            console.log(data)
+                            res.json({ done: true })
+                            return
+                        }
+                    }) //add functionality to remove other admins
+                    
+                }
+                else res.json({ err: "User doesn't exist in team", done: false })
+            }
         }
-    } )
+        res.json({ err: "You're not an admin of this team", done: false })
+    })
 })
-// router.post('/manageTeam', ensureAuthenticated, (req,res)=> {
-//     res.render()
-// })
+
 module.exports = router;
 
 
