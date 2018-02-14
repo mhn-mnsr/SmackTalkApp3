@@ -1,3 +1,4 @@
+const Handlebars = require('handlebars')
 let register = function(Handlebars) {
     var helpers = {
         compare: function (lvalue, operator, rvalue, options) {
@@ -34,17 +35,18 @@ let register = function(Handlebars) {
         vue: function(options){
             return options.fn()
         },
-        isAdmin: function(uid,adminMembers){
+        isAdmin: function(uid,adminMembers,tid){
             let admin = '<p>Admin</p>'
             if( arguments.length <2){
                 throw new Error('This wrong sir')
             }
             for(member in adminMembers){
                 if(adminMembers[member] == uid.toString()) {
-                    return '<i class="fas fa-key"></i>'
+                    return new Handlebars.SafeString('<i class="fas fa-key"></i>')
                 }
             }
-            return `<i class="fas fa-trash" id=${uid} style="cursor:pointer"></i>`
+            let result = `<button type="button" onclick="deleteUserFromTeam(${uid},${tid})" class="btn btn-default"><span class="fas fa-trash"></span>Delete</button>`
+            return new Handlebars.SafeString(result)
         }
 };
 

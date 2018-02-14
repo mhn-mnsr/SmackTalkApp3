@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const exphbs = require('express-handlebars');
+const Handlebars = require('handlebars');
 const expressValidator = require('express-validator');
 const flash = require('connect-flash');
 const passport = require('passport');
