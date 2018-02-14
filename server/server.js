@@ -13,7 +13,9 @@ const mongo = require('mongodb')
 const mongoose = require("mongoose");
 const server = require('http').createServer(app) 
 const io = require('socket.io').listen(server)
-const routes_setter = require('./config/routes.js');
+require('./models/user')
+require('./models/team')
+require('./models/message')
 const r_public = require('./routes/public')
 const r_private = require('./routes/private')
 const r_api = require('./routes/api')

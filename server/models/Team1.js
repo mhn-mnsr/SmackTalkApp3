@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('User')
-
 const TeamSchema = mongoose.Schema({
     teamName: { type: String},
     teamDescription: { type: String },
@@ -10,32 +9,40 @@ const TeamSchema = mongoose.Schema({
     _message: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
 }, {timestamp: true})
 
+// if (!mongoose.models.Team)
+// else    
+//     Team = mongoose.model('Team');
 
-TeamSchema.statics.createTeam = function(newTeam, callback){
+module.exports = TeamSchema
+
+module.exports.createTeam = (newTeam, callback)=>{
     newTeam.save(callback)
 }
 
-TeamSchema.statics.getTeamByName = function(teamName, callback) {
+module.exports.getTeamByName = (teamName, callback) => {
     let query = {teamName: teamName}
     Team.findOne(query, callback)
 }
 
-TeamSchema.statics.getTeamsByUserId = function(id,callback){
+module.exports.getTeamsByUserId = (id,callback)=>{
     User.findById(id,callback)
 }
 
-TeamSchema.statics.getAdminTeams = function(id,callback) {
+module.exports.getAdminTeams = (id,callback) => {
     Team.find({_adminMembers: id})
     .select('_id _adminMembers _members _pendingMembers teamName')
     .populate('_members')
     .exec(callback)
 }
-TeamSchema.statics.findByTId = function(id,callback){
+module.exports.findByTId = (id,callback) => {
     Team.findById(id,callback)
 }
-    
-TeamSchema.statics.findByTIdAndUpdate = (query,update,callback) =>{
-    Team.findAndUpdate(query,update,callback)
-}
 
+// module.exports.findByTIdAndUpdate = (tid,update,callback) =>{
+    //     Team.findByIdAndUpdate(tid,update,callback)
+    // }
+    
+    module.exports.findByTIdAndUpdate = (query,update,callback) =>{
+        Team.findAndUpdate(query,update,callback)
+    }
 const Team = module.exports = mongoose.model('Team', TeamSchema);

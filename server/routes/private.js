@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose')
-const Team = require('../models/Team')
+const Team = mongoose.model('Team')
 
 
 let ensureAuthenticated = (req, res, next) =>{

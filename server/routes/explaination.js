@@ -8,7 +8,7 @@ potato('im a string',
 )
 
 
-const mongoose = require('mongoose')
-const Team = require('../models/Team')
+// const mongoose = require('mongoose')
+// const Team = require('../models/Team')
 
-Team.findOneAndUpdate
+// Team.findOneAndUpdate
