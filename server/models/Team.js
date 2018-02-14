@@ -35,7 +35,7 @@ TeamSchema.statics.findByTId = function(id,callback){
 }
     
 TeamSchema.statics.findByTIdAndUpdate = (query,update,callback) =>{
-    Team.findAndUpdate(query,update,callback)
+    Team.findByIdAndUpdate(query,update,callback)
 }
 
 const Team = module.exports = mongoose.model('Team', TeamSchema);

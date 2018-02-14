@@ -198,25 +198,29 @@ router.get('/teamManager', ensureAuthenticated, (req, res) => {
 router.get('/deleteUserFromTeam/:uid/:tid', (req, res) => {
     let uid = req.params.uid
     let tid = req.params.tid
+    let admin = false
     Team.findByTId(tid, (err, data) => {
         if (err) throw err
         else {
             for (user in data._adminMembers) {
                 if (data._adminMembers[user] == req.user._id.toString()) {
-                    Team.findByTIdAndUpdate({_id:tid}, { $pull: { _members: uid } },{ multi: true }, (err, data) => {
+                    admin = !admin
+                    break
+                }
+            }
+            if (admin){
+                Team.findByTIdAndUpdate(tid, { $pull: { _members: uid,_adminMembers:uid } }, (err, data) => {
                         if (err) throw err
                         else {
-                            console.log(data)
-                            res.json({ done: true })
+                            res.json({ msg: "User deleted",done: true })
                             return
                         }
-                    }) //add functionality to remove other admins
-                    
-                }
-                else res.json({ err: "User doesn't exist in team", done: false })
+                    }) //added functionality to remove other admins
+            }else{
+                res.json({ msg: "You're not an admin of this team", done: false })
+                return
             }
         }
-        res.json({ err: "You're not an admin of this team", done: false })
     })
 })
 
