@@ -13,7 +13,6 @@ const UserSchema = mongoose.Schema({
 
 
 UserSchema.statics.createUser = function (newUser, callback) {
-    console.log('I started');
     bcrypt.genSalt(10, function (err, salt) {
         bcrypt.hash(newUser.password, salt, function (err, hash) {
             newUser.password = hash;
