@@ -229,6 +229,22 @@ router.get('/deleteUserFromTeam/:uid/:tid', ensureAuthenticated, (req, res) => {
     })
 })
 
+router.post('/joinTeam',(req,res)=>{
+    let tname = req.body.tname
+    Team.getTeamByName(tname,(err,data)=>{
+        if(err) throw err
+        else{
+            if(data){
+                Team.getTeamByNameAndAddMember(tname,req.user._id,(err)=>{if (err) throw err})
+                req.flash('success_msg',`Request sent to ${tname}`)
+                res.redirect('/auth/joinTeam')
+            }else{
+                req.flash('error_msg','Team does not exist!')
+                res.redirect('/auth/joinTeam')
+            }
+        }
+    })
+})
 module.exports = router;
 
 

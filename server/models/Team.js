@@ -19,6 +19,10 @@ TeamSchema.statics.getTeamByName = function(teamName, callback) {
     let query = {teamName: teamName}
     Team.findOne(query, callback)
 }
+TeamSchema.statics.getTeamByNameAndAddMember = function(teamName,memberId, callback) {
+    let query = {teamName: teamName}
+    Team.findOneAndUpdate(query,{$push:{_pendingMembers:memberId}}, callback)
+}
 
 TeamSchema.statics.getTeamsByUserId = function(id,callback){
     User.findById(id,callback)
