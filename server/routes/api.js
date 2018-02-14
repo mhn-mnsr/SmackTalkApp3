@@ -195,7 +195,7 @@ router.get('/teamManager', ensureAuthenticated, (req, res) => {
     })
 })
 
-router.get('/deleteUserFromTeam/:uid/:tid', (req, res) => {
+router.get('/deleteUserFromTeam/:uid/:tid', ensureAuthenticated, (req, res) => {
     let uid = req.params.uid
     let tid = req.params.tid
     let admin = false
