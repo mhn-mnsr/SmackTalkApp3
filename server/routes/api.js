@@ -212,8 +212,13 @@ router.get('/deleteUserFromTeam/:uid/:tid', ensureAuthenticated, (req, res) => {
                 Team.findByTIdAndUpdate(tid, { $pull: { _members: uid,_adminMembers:uid } }, (err, data) => {
                         if (err) throw err
                         else {
-                            res.json({ msg: "User deleted",done: true })
-                            return
+                            User.findByIdAndUpdate(uid,{$pull: {_teams:tid}},(err)=>{
+                                if (err) throw err
+                                else{
+                                    res.json({ msg: "User deleted",done: true })
+                                    return
+                                }
+                            })
                         }
                     }) //added functionality to remove other admins
             }else{
