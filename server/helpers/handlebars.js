@@ -1,5 +1,5 @@
-const Handlebars = require('handlebars')
 let register = function(Handlebars) {
+    const hb = require('handlebars')
     var helpers = {
         compare: function (lvalue, operator, rvalue, options) {
             var operators, result;
@@ -36,17 +36,20 @@ let register = function(Handlebars) {
             return options.fn()
         },
         isAdmin: function(uid,adminMembers,tid){
+            let userid = hb.Utils.escapeExpression(uid)
+            let teamid = hb.Utils.escapeExpression(tid)
             let admin = '<p>Admin</p>'
             if( arguments.length <2){
                 throw new Error('This wrong sir')
             }
             for(member in adminMembers){
                 if(adminMembers[member] == uid.toString()) {
-                    return new Handlebars.SafeString('<i class="fas fa-key"></i>')
+                    let adminIco = '<i class="fas fa-key"></i>'
+                    return new hb.SafeString(adminIco)
                 }
             }
-            let result = `<button type="button" onclick="deleteUserFromTeam(${uid},${tid})" class="btn btn-default"><span class="fas fa-trash"></span>Delete</button>`
-            return new Handlebars.SafeString(result)
+            let deleteBtn = `<span class="fas fa-trash" uid="${userid}" tid="${teamid}"></span>`
+            return new hb.SafeString(deleteBtn)
         }
 };
 
