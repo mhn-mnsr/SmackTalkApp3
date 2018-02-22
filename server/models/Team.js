@@ -6,7 +6,7 @@ const TeamSchema = mongoose.Schema({
     teamDescription: { type: String },
     _adminMembers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     _members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-    _pendingMembers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    _pendingMembers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
     _message: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
 }, { timestamp: true })
 
@@ -43,12 +43,16 @@ TeamSchema.statics.findByTIdAndUpdate = (query, update, callback) => {
     Team.findByIdAndUpdate(query, update, callback)
 }
 
-// TeamSchema.statics.joinRequests = function (id, callback) {
-//     Team.find({ _adminMembers: id })
-//         .select('_id _adminMembers _members _pendingMembers teamName')
-//         .populate('_pendingMembers')
-//         .exec(callback)
-// }
+TeamSchema.statics.pendingRequests = function (id, callback) {
+    Team.find({ _adminMembers: id })
+        .select('teamName _pendingMembers')
+        .populate({path:'_pendingMembers',
+                   select:'username firstName lastName'})//for formatting maybe? or you dont want them works for me now
+        .exec(callback)
+}
 
+// TeamSchema.statics.acceptRequest = function (id, callback) {
+//     Team.findByIdAndUpdate(id, callback)
+// }
 
 const Team = module.exports = mongoose.model('Team', TeamSchema);

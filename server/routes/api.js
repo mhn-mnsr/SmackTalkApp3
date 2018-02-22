@@ -7,7 +7,13 @@ const User = mongoose.model('User')
 const Team = mongoose.model('Team')
 
 
-
+let isTeamAdmin = (tid,req) =>{
+    let admin = false
+    for(t in req.user._adminTeams){
+        if (req.user._adminTeams[t] == tid) return admin = true
+    }
+    return admin
+}
 router.get('/', (req, res) => { res.send('API ROUTE') })
 
 router.post('/register', (req, res) => {
@@ -145,7 +151,7 @@ router.get('/getProfile', ensureAuthenticated, (req, res) => {
     User.getUserById(req.user._id, (err, user) => {
         res.json(user)
     })
-})
+})//come back to this
 
 router.post('/createTeam', ensureAuthenticated, (req, res) => {
     let _ml = req.body.ml
@@ -174,9 +180,15 @@ router.post('/createTeam', ensureAuthenticated, (req, res) => {
                     if (err) throw (err)
                     else {
                         for (user in _ml) {
-                            User.findByIdAndUpdate(_ml[user], { $push: { _teams: newTeam._id } }, (err, doc) => {
-                                if (err) throw err
-                            })
+                            if(_ml[user] == req.user._id){
+                                User.findByIdAndUpdate(_ml[user], { $push: { _teams: newTeam._id,_adminTeams: newTeam._id } }, (err, doc) => {
+                                    if (err) throw err
+                                })
+                            }else{
+                                User.findByIdAndUpdate(_ml[user], { $push: { _teams: newTeam._id} }, (err, doc) => {
+                                    if (err) throw err
+                                })
+                            }
                         }
 
                         req.flash('success_msg', `${req.body.teamName} has been created!`)
@@ -258,13 +270,36 @@ router.post('/joinTeam', ensureAuthenticated,(req, res) => {
     })
 })
 
-// router.get('/getPendingRequests', (req,res)=> {
-//     // /joinTeam?accept=1&tid=45678656467&uid=456743567
-//    Team.joinRequests(req.team._id, (err, data)=>{
-//        if (err) throw err
-//        res.json(data)
-//    })
-// })
+router.get('/getPendingRequests', ensureAuthenticated, (req, res)=> {
+	Team.pendingRequests(req.user._id, (err, data)=>{
+		if (err) throw err
+		res.json(data)
+	})
+})
 
+router.get('/joinTeam', ensureAuthenticated, (req,res)=> {
+    //joinTeam?accept=1&tid=45678656467&uid=456743567
+    let accept = req.query.accept
+    accept = accept == 1 ? true : false
+    let tid = req.query.tid
+    let uid = req.query.uid
+    let admin = isTeamAdmin(tid,req)
+    if(admin){
+        if (accept){
+            Team.findByTIdAndUpdate(tid, {$pull: {_pendingMembers: uid},$push:{_members: uid}},(err, data)=>{
+                if (err) throw err
+                User.findByIdAndUpdate(uid,{$push:{_teams:tid}}).then(res.json({done:true, msg: `User has been accepted`}))
+            })
+
+        }else{
+            Team.findByTIdAndUpdate(tid, {$pull: {_pendingMembers: uid}}, (err, data)=>{
+                if (err) throw err
+                res.json({done:true, msg: `User has been rejected`})//drop all ur db and create 2 users and create a team without the user, then request to join then accept
+            })
+        }
+    }
+    else{
+        res.json({done:false,msg:`You're not admin of the team`})
+    }
+})//
 module.exports = router;
-

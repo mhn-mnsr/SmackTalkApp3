@@ -1,16 +1,25 @@
-<div class="w3-container">
-
-  <div class="w3-card-4 w3-dark-grey" style="width:50%">
-
-    <div class="w3-container w3-center">
-      <h3>Friend Request</h3>
-      <h5>John Doe <small>Team Name</small></h5>
-      
-      <div class="w3-section">
-        <button class="w3-button w3-green">Accept</button>
-        <button class="w3-button w3-red">Decline</button>
-      </div>
+<div id="accordion">
+{{#each data}} {{#compare _pendingMembers.length '>' 0}}
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <h5 class="mb-0">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapse-{{@index}}" aria-expanded="true" aria-controls="collapseOne">
+          {{teamName}}
+        </button>
+      </h5>
     </div>
 
+    <div id="collapse-{{@index}}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+      <div class="card-body">
+        {{#each _pendingMembers}}
+        <p>{{this.username}}</p>
+        <button onclick="joinTeam(1,'{{../_id}}','{{_id}}')">Accept</button>
+        <button onclick="joinTeam(0,'{{../_id}}','{{_id}}')">Reject</button>
+        {{/each}}
+      </div>
+    </div>
   </div>
+  {{/compare}} {{/each}}
 </div>
+
+<script src="/js/joinRequests.js"><{{!}}/script>

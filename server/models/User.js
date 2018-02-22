@@ -7,6 +7,7 @@ const UserSchema = mongoose.Schema({
     lastName: { type: String },
     password: { type: String },
     _teams: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Team', default: [] }],
+    _adminTeams:[{type: mongoose.Schema.Types.ObjectId, ref: 'Team', default: []}],
     _messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }]
 }, 
 { timestamps: true })

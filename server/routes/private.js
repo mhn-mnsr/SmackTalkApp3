@@ -41,11 +41,11 @@ router.get('/joinTeam', ensureAuthenticated, (req, res)=> {
 	res.render('joinTeam', {title: 'Join Team'})
 })
 
-// router.get('/joinRequests', ensureAuthenticated, (req, res)=> {
-// 	Team.joinRequests(req.Team._id, (err, data)=>{
-// 		if (err) throw err
-// 		res.render('joinRequests', {title: 'Join Team', data:data})
-// 	})
-// })
+router.get('/joinRequests', ensureAuthenticated, (req, res)=> {
+	Team.pendingRequests(req.user._id, (err, data)=>{
+		if (err) throw err
+		res.render('joinRequests', {title: 'Join Team', data:data})
+	})
+})
 
 module.exports = router;
