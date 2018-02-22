@@ -1,0 +1,6 @@
+- Member wants to join team
+- Member sends request
+- Admin of member gets request (on joinrequest page)
+- Admin accepts or denies request
+- If accepted, accepted member now in memebers list
+- If denied, request deleted.
