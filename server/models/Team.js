@@ -7,7 +7,7 @@ const TeamSchema = mongoose.Schema({
     _adminMembers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     _members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     _pendingMembers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
-    _message: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
+    _messages: [],
 }, { timestamp: true })
 
 
@@ -28,11 +28,28 @@ TeamSchema.statics.getTeamsByUserId = function (id, callback) {
     User.findById(id, callback)
 }
 
+TeamSchema.statics.addTeamMessage = function (msgcontainer, callback) {
+    Team.findByIdAndUpdate(msgcontainer.tid,{$push:{
+        _messages:{
+            user:msgcontainer.user,
+            message:msgcontainer.message,
+            createdAt: msgcontainer.createdAt
+        }}},(err,data)=>{if (err) throw err})
+        
+}
+
 TeamSchema.statics.getAdminTeams = function (id, callback) {
     Team.find({ _adminMembers: id })
         .select('_id _adminMembers _members _pendingMembers teamName')
         .populate('_members')
         .exec(callback)
+}
+
+TeamSchema.statics.getUserTeams = function (id, callback) {
+    Team.find({ _members: id },(err,data)=>console.log(data))
+        // .select('_id _members teamName')
+        // .populate('_members')
+        // .exec(callback)
 }
 
 TeamSchema.statics.findByTId = function (id, callback) {
@@ -50,6 +67,7 @@ TeamSchema.statics.pendingRequests = function (id, callback) {
                    select:'username firstName lastName'})//for formatting maybe? or you dont want them works for me now
         .exec(callback)
 }
+
 
 // TeamSchema.statics.acceptRequest = function (id, callback) {
 //     Team.findByIdAndUpdate(id, callback)

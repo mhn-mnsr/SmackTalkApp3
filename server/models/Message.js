@@ -1,13 +1,17 @@
-var mongoose = require("mongoose");
-var Schema = mongoose.Schema;
+const mongoose = require("mongoose");
+const Schema = mongoose.Schema;
 
-var MessageSchema = new mongoose.Schema({
+const MessageSchema = new mongoose.Schema({
     messageContent: String,
     _user: { type: Schema.Types.ObjectId, ref: 'User' },
-    _team: [{ type: Schema.Types.ObjectId, ref: 'Team'}]
+    team: [{ type: Schema.Types.ObjectId, ref: 'Team'}]
 },
  { timestamps: true });
 
-mongoose.model('Message', MessageSchema);
 
-var Message = mongoose.model('Message');
+MessageSchema.statics.addTeamMessage = function (msg, tid,callback) {
+    Message.find({_team:tid})
+}
+
+mongoose.model('Message', MessageSchema);
+const Message = mongoose.model('Message');

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose')
+const User = mongoose.model('User')
 const Team = mongoose.model('Team')
 
 
@@ -17,11 +18,15 @@ router.get('/', (req,res)=>{
 })
 
 router.get('/home', ensureAuthenticated, (req,res)=>{
-    res.render('home', {title: 'Home'})
+        res.render('home', {title: 'Home'})
 })
 
 router.get('/createTeam', ensureAuthenticated, (req, res)=> {
 	res.render('createTeam', {title: 'Create a Team'})
+})
+
+router.get('/chat', ensureAuthenticated, (req,res)=>{
+    res.render('chat', {title: 'Chat Page'})
 })
 
 router.get('/logout', (req, res) => {

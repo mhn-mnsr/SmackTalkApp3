@@ -13,7 +13,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const mongo = require('mongodb')
 const mongoose = require("mongoose");
 const server = require('http').createServer(app) 
-const io = require('socket.io').listen(server)
+const io = require('socket.io')(server)
 require('./models/user')
 require('./models/team')
 require('./models/message')
@@ -23,6 +23,7 @@ const r_api = require('./routes/api')
 const requestIp = require('request-ip');
 
 require('./config/db.js');
+require('./config/socket')(io)
 
 
 app.set('views', path.join(__dirname, 'views'));
@@ -71,13 +72,14 @@ app.use(function (req, res, next) {
 	res.locals.user = req.user || null;
 	next();
   });
-  
+
 app.use('/', r_public);
 app.use('/auth', r_private)
 app.use('/api', r_api)
 
-app.set('port', process.env.port || 8000);
-app.listen(app.get('port'), function(){
-	console.log('Server started on port ' +app.get('port'));
+app.set('port', process.env.port || 8000)
+
+server.listen(app.get('port'), function(){
+	console.log('Server started on port ' +app.get('port'))
 });
 

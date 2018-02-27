@@ -139,16 +139,22 @@ router.post('/updateProfile', (req, res) => {
         })
     }
 })
-
+//might need below function for another function if so must be refactored
 router.get('/allUsers', ensureAuthenticated, (req, res) => {
     User.find({}, (err, user) => {
         res.json(user);
     })
-})
+}) 
 
 
 router.get('/getProfile', ensureAuthenticated, (req, res) => {
     User.getUserById(req.user._id, (err, user) => {
+        user = {_teams:user._teams,
+                _adminTeams:user._adminTeams,
+                _id:user._id,
+                username:user.username,
+                firstName:user.firstName,
+                lastName:user.lastName}
         res.json(user)
     })
 })//come back to this
@@ -199,7 +205,18 @@ router.post('/createTeam', ensureAuthenticated, (req, res) => {
         })
     }
 })
-
+router.get('/getUserTeams', ensureAuthenticated, (req,res)=>{
+    User.getUserTeams(req.user._id, (err,data)=>{
+        if (err) throw err
+        res.json(data)
+    })
+})
+router.get('/getTeamsMessages',ensureAuthenticated,(req,res)=>{
+    User.getTeamsMessages(req.user._id, (err,data)=>{
+        if (err) throw err
+        res.json(data)
+    })
+})
 router.get('/teamManager', ensureAuthenticated, (req, res) => {
     Team.getAdminTeams(req.user._id, (err, data) => {
         if (err) throw err
@@ -241,35 +258,61 @@ router.get('/deleteUserFromTeam/:uid/:tid', ensureAuthenticated, (req, res) => {
     })
 })
 
-router.post('/joinTeam', ensureAuthenticated,(req, res) => {
+router.post('/joinTeam', ensureAuthenticated,(req, res) => {// parent function
     let tname = req.body.tname
     let duplicate = false
+    let pDuplicate = false
     Team.getTeamByName(tname, (err, data) => {
-        if (data) {
+        if (!data) {
+            req.flash('error_msg', 'Team does not exist!')
+            res.redirect('/auth/joinTeam')
+            return
+        }
+        else {
             data._members.forEach(e => {
-                if (e == req.user.id) {
+                if (e == req.user._id) {
                     duplicate = !duplicate
                     return
                 }
             })
-            if (!duplicate) {
+            data._pendingMembers.forEach(e=>{
+                if(e==req.user._id){
+                    pDuplicate = !pDuplicate
+                    return
+                }
+            })
+            if (pDuplicate){
+                req.flash('error_msg', `Your request is still pending with ${tname}`)
+                res.redirect('/auth/joinTeam')
+                return
+            }
+            if (duplicate) {
+                req.flash('error_msg', "You're already a memeber of this team")
+                res.redirect('/auth/joinTeam')
+                return
+            }
+            else {
                 Team.getTeamByNameAndAddMember(tname, req.user._id, (err) => { if (err) throw err })
                 req.flash('success_msg', `Request sent to ${tname}`)
                 res.redirect('/auth/joinTeam')
+                return
             }
-            else {
-                req.flash('error_msg', "You're already a memeber of this team")
-                res.redirect('/auth/joinTeam')
-            }
-        }
-        else {//works
-            req.flash('error_msg', 'Team does not exist!')
-            res.redirect('/auth/joinTeam')
         }
 
     })
 })
-
+router.post('/addTeamMessage',ensureAuthenticated, (req,res)=>{
+    let msg = {
+            tid:req.body.tid,
+            user:req.user._id,
+            username:req.user.username,
+            message:req.body.nmessage,
+            createdAt: new Date().toString()
+    }
+    console.log(msg)
+    Team.addTeamMessage(msg)
+    res.redirect('../auth/home')
+})
 router.get('/getPendingRequests', ensureAuthenticated, (req, res)=> {
 	Team.pendingRequests(req.user._id, (err, data)=>{
 		if (err) throw err
@@ -288,18 +331,18 @@ router.get('/joinTeam', ensureAuthenticated, (req,res)=> {
         if (accept){
             Team.findByTIdAndUpdate(tid, {$pull: {_pendingMembers: uid},$push:{_members: uid}},(err, data)=>{
                 if (err) throw err
-                User.findByIdAndUpdate(uid,{$push:{_teams:tid}}).then(res.json({done:true, msg: `User has been accepted`}))
+                User.findByIdAndUpdate(uid,{$push:{_teams:tid}}).then(res.json({msgType:'success_msg', msg: `User has been accepted`}))
             })
 
         }else{
             Team.findByTIdAndUpdate(tid, {$pull: {_pendingMembers: uid}}, (err, data)=>{
                 if (err) throw err
-                res.json({done:true, msg: `User has been rejected`})//drop all ur db and create 2 users and create a team without the user, then request to join then accept
+                res.json({done:true, error_msg: `User has been rejected`})//drop all ur db and create 2 users and create a team without the user, then request to join then accept
             })
         }
     }
     else{
-        res.json({done:false,msg:`You're not admin of the team`})
+        res.json({done:false,error_msg:`You're not admin of the team`})
     }
 })//
 module.exports = router;

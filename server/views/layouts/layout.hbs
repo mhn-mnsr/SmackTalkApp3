@@ -11,6 +11,7 @@
     <script src="../js/jquery.js"></script>
     <script src="../js/tether.min.js"></script>
     <script src="../js/bootstrap.js"></script>
+    <script src="../js/socket.io.js"></script>
     <title>SmackTalk - {{title}}</title>
 </head>
 <style>
@@ -20,8 +21,9 @@
 
 </style>
 <body>
+    {{!-- padding-top:3%;margin:0 3% 0 3% --}}
     {{> nav }}
-    <div class="container" style="padding-top:3%;margin:0 3% 0 3%">
+    <div class="container">
         {{> flashmsgs}}
         {{{body}}}  
     </div>

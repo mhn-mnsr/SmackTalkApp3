@@ -27,7 +27,19 @@ UserSchema.statics.getUserByUsername = function(username, callback) {
     User.findOne(query, callback)
 }
 
+UserSchema.statics.getUserTeams = function(id, callback) {
+    User.findById(id).
+    select('-_id _teams').
+    populate({path:'_teams',select:'teamName'}).
+    exec(callback)
+}
 
+UserSchema.statics.getTeamsMessages = function(id, callback) {
+    User.findById(id).
+    select('-_id _teams').
+    populate({path:'_teams',select:'teamName _messages _id'}).
+    exec(callback)
+}
 
 UserSchema.statics.getUserById = function (id, callback) {
     User.findById(id, callback)
