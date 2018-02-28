@@ -5,7 +5,10 @@ const User = mongoose.model('User')
 const Team = mongoose.model('Team')
 
 router.get('/', (req,res)=>{
-    res.render('login',{title:'Login'})
+    if(!req.user)
+        res.render('login',{title:'Login'})
+    else
+        res.redirect('/auth/home')
 })
 
 router.get('/register', (req,res)=>{
