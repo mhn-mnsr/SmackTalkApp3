@@ -42,6 +42,7 @@ let selectDifferentTeam = (el) =>{
             }
         }
     })
+    $('#nmessage').focus()
 }
 $(document).ready(() => {
    
