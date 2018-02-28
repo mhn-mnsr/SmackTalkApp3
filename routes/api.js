@@ -183,6 +183,7 @@ router.post('/createTeam', ensureAuthenticated, (req, res) => {
                     _members: _ml
                 })
                 Team.createTeam(newTeam, (err, Team) => {
+
                     if (err) throw (err)
                     else {
                         for (user in _ml) {
@@ -300,17 +301,6 @@ router.post('/joinTeam', ensureAuthenticated,(req, res) => {// parent function
         }
 
     })
-})
-router.post('/addTeamMessage',ensureAuthenticated, (req,res)=>{
-    let msg = {
-            tid:req.body.tid,
-            user:req.user._id,
-            username:req.user.username,
-            message:req.body.nmessage,
-            createdAt: new Date().toString()
-    }
-    Team.addTeamMessage(msg)
-    res.redirect('../auth/home')
 })
 router.get('/getPendingRequests', ensureAuthenticated, (req, res)=> {
 	Team.pendingRequests(req.user._id, (err, data)=>{
