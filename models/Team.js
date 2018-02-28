@@ -32,9 +32,11 @@ TeamSchema.statics.addTeamMessage = function (msgcontainer, callback) {
     Team.findByIdAndUpdate(msgcontainer.tid,{$push:{
         _messages:{
             user:msgcontainer.user,
+            username:msgcontainer.username,
             message:msgcontainer.message,
             createdAt: msgcontainer.createdAt
         }}},(err,data)=>{if (err) throw err})
+        callback
         
 }
 

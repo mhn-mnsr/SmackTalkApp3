@@ -309,7 +309,6 @@ router.post('/addTeamMessage',ensureAuthenticated, (req,res)=>{
             message:req.body.nmessage,
             createdAt: new Date().toString()
     }
-    console.log(msg)
     Team.addTeamMessage(msg)
     res.redirect('../auth/home')
 })

@@ -218,7 +218,9 @@
         border: 15px solid transparent;
         border-bottom-color: #94C2ED;
     }
-
+    .selected{
+        background: darkgray
+    }
     @media only screen and (max-width:320px) {
         .main-section {
             display: none;
@@ -258,14 +260,11 @@
             </div>
             <div class="row">
                 <div class="col-md-12 right-chat-textbox">
-                    <form action="/api/addTeamMessage" method="post">
                         <input type='text' id="tid" name="tid" style="visibility:hidden;height:0" />
-                        <input type="text" name='nmessage'>
-                        <button type="submit">
+                        <input type="text" name='nmessage' id='nmessage' onkeydown="isEnter(event)">
+                        <button type="button" onclick='sendMessage()'>
                             send
-                            {{!-- <i class="fa fa-arrow-right" aria-hidden="true"></i> --}}
-                        </button>
-                    </form>
+                        </button> 
                 </div>
             </div>
         </div>
