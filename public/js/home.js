@@ -1,4 +1,7 @@
 let aUSER
+let scrollBottom = () => {
+    document.getElementById("chat-window").scrollTop = document.getElementById("chat-window").scrollHeight
+}
 let sendMessage = () => {
     if (document.getElementById('nmessage').value == '') return
     let msgcontainer = {
@@ -10,7 +13,9 @@ let sendMessage = () => {
     }
     socket.emit('message', msgcontainer)
     document.getElementById('messages').innerHTML += `<li><p><me>${aUSER.username}:</me> ${msgcontainer.message}</p></li>`
+    scrollBottom()
     document.getElementById('nmessage').value = ''
+
 }
 let isEnter = (e) => {
     if (e.keyCode == 13) {
@@ -42,8 +47,10 @@ let selectDifferentTeam = (el) => {
 }
 
 let updateMessage = msgcontainer => {
-    if (msgcontainer.user !== aUSER._id && document.getElementById('teamName').attributes.tid == msgcontainer.tid)
+    if (msgcontainer.user !== aUSER._id && document.getElementById('teamName').attributes.tid == msgcontainer.tid) {
         document.getElementById('messages').innerHTML += `<li><p><you>${msgcontainer.username}:</you> ${msgcontainer.message}</p></li>`
+        scrollBottom
+    }
 }
 $(document).ready(() => {
 
@@ -71,6 +78,7 @@ $(document).ready(() => {
                     document.getElementById('messages').innerHTML += `<li><p><me>${m.username}:</me> ${m.message}</p></li>`
                 }
             })
+            scrollBottom()
         })
     )
     socket = io.connect('http://localhost:8000')
