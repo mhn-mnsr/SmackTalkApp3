@@ -78,7 +78,7 @@ app.use('/api', r_api)
 
 app.set('port', process.env.port || 8000)
 
-server.listen(app.get('port'), function(){
+server.listen(app.get('port'), ()=>{
 	console.log('Server started on port ' +app.get('port'))
 });
 

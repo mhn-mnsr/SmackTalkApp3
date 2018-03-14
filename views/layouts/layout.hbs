@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    {{!-- <link rel="stylesheet" href="/css/font-awesome.min.css"> --}}
+
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <script src="../js/jquery.js"></script>
     <script src="../js/tether.min.js"></script>
@@ -15,18 +15,29 @@
     <title>SmackTalk - {{title}}</title>
 </head>
 <style>
-    body { 
-    padding-top: 65px; 
-}
+    body {
+        padding-top: 65px;
+        background-image: url("/img/smacktalkerspic.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: auto;
+        min-width: 50%;
+        min-height: 50%;
+    }
 
 </style>
+
 <body>
-    {{!-- padding-top:3%;margin:0 3% 0 3% --}}
-    {{> nav }}
-    <div class="container">
-        {{> flashmsgs}}
-        {{{body}}}  
-    </div>
+
+        {{> nav }}
+        <div class="container">
+            {{> flashmsgs}} {{{body}}}
+        </div>
+
     {{> modal}}
 </body>
 
