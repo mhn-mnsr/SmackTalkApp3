@@ -49,7 +49,7 @@ let selectDifferentTeam = (el) => {
 let updateMessage = msgcontainer => {
     if (msgcontainer.user !== aUSER._id && document.getElementById('teamName').attributes.tid == msgcontainer.tid) {
         document.getElementById('messages').innerHTML += `<li><p><you>${msgcontainer.username}:</you> ${msgcontainer.message}</p></li>`
-        scrollBottom
+        scrollBottom()
     }
 }
 $(document).ready(() => {
