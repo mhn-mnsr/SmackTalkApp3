@@ -14,8 +14,8 @@ const mongo = require('mongodb')
 const mongoose = require("mongoose");
 const server = require('http').createServer(app) 
 const io = require('socket.io')(server)
-require('./models/user')
-require('./models/team')
+require('./models/User')
+require('./models/Team')
 const r_public = require('./routes/public')
 const r_private = require('./routes/private')
 const r_api = require('./routes/api')
@@ -78,7 +78,7 @@ app.use('/api', r_api)
 
 app.set('port', process.env.port || 8000)
 
-server.listen(app.get('port'), function(){
+server.listen(app.get('port'), ()=>{
 	console.log('Server started on port ' +app.get('port'))
 });
 
