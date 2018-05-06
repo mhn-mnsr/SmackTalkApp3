@@ -13,13 +13,12 @@ let ensureAuthenticated = (req, res, next) =>{
 		res.redirect('../login');
 	}
 }
+
 router.get('/', (req,res)=>{
     res.send('PRIVATE ROUTE')
 })
 
-router.get('/home', ensureAuthenticated, (req,res)=>{
-        res.render('home', {title: 'Home'})
-})
+router.get('/home', ensureAuthenticated, (req,res)=>{User.renderHome(req,res)})
 
 router.get('/createTeam', ensureAuthenticated, (req, res)=> {
 	res.render('createTeam', {title: 'Create a Team'})

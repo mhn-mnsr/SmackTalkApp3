@@ -45,7 +45,7 @@ router.post('/createTeam', ensureAuthenticated, (req, res) => {
             if (team) {
                 req.flash('error_msg', `${req.body.teamName} has already been used, please try another one`)
                 res.redirect('/auth/createTeam')
-            } else {r9
+            } else {
                 const newTeam = new Team({
                     _adminMembers: req.user._id,
                     teamName: req.body.teamName,

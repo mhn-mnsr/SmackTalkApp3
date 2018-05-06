@@ -1,5 +1,4 @@
 let deleteUserFromTeam = (uid, tid) => {
-    console.log(uid,tid)
     let xmlHttp = new XMLHttpRequest();
     xmlHttp.open("GET", `/api/deleteUserFromTeam/${uid}/${tid}`, true); // true for asynchronous 
     xmlHttp.send(null);

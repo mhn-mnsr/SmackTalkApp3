@@ -28,7 +28,7 @@
     }
     .teamName{
         font-size: 18px;
-        padding: 10px 20px;
+        padding: 10px 26.61px;
         color: #575ed8;     
     }
     button{
@@ -96,9 +96,17 @@
     .teamsname h3{
         padding-right: 100%;
     }
-
+    .container-table {
+    display: table;
+    }
+    .vertical-center-row {
+        display: table-cell;
+        vertical-align: middle;
+    }
 </style>
+{{#compare teamSize '>' 0}}
 <div class="chat">
+    {{#compare teamSize '>' 1}}
     <div class="dropdown-team" style="padding-left:90%">
 
         <h2 class="teamName" id='teamName' ></h2>
@@ -107,10 +115,23 @@
             </ul>
         </div>
     </div>
+    {{/compare}}
     <div class="chat-window" id='chat-window'>
         <ul class="output" id='messages' style="padding-left: 0px;padding-top:10px;"></ul>
     </div>
     <input class="message" id='nmessage' type="text" placeholder="Message" onkeydown="isEnter(event)" />
     <button class="send" onclick="sendMessage()">Send</button>
 </div>
+{{/compare}}
+{{#compare teamSize '==' 0}}
+    <div class="container" style="padding-top:15%">
+        <div class="card">
+            <div class="card-body" style="margin:15px 15px 15px 15px;">
+                Uh Oh! You're not part of any team :(
+                <br>
+                <a href="/auth/createTeam">Click here to create a team</a>
+            </div>
+        </div>
+    </div>
+{{/compare}}
 <script src="/js/home.js"><{{!}}/script>
