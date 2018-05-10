@@ -54,7 +54,6 @@ UserSchema.statics.comparePassword  = function (candidatePassword, hash, callbac
 
 UserSchema.statics.isTeamAdmin = (tid,req) =>{
     let admin = false
-    console.log('running from models..')
     for(t in req.user._adminTeams){
         if (req.user._adminTeams[t] == tid) return admin = true
     }
@@ -62,7 +61,6 @@ UserSchema.statics.isTeamAdmin = (tid,req) =>{
 }
 
 UserSchema.statics.registerUser = (req,res) =>{
-    console.log('Running from models')
     //variables
     let email = req.body.email
     let username = req.body.username
@@ -144,7 +142,6 @@ UserSchema.statics.updateProfile = (req,res) =>{
 
 UserSchema.statics.allUsers = (req,res) =>{
     User.find({}, {password: 0},(err, user) => {
-        console.log(user)
         res.json(user);
     })
 }
@@ -152,6 +149,12 @@ UserSchema.statics.allUsers = (req,res) =>{
 UserSchema.statics.getProfile = (req,res) =>{
     User.findById(req.user._id,{password:0}, (err, user) => {
         res.json(user)
+    })
+}
+
+UserSchema.statics.renderHome = (req,res) =>{
+    User.findById(req.user._id).then(user =>{
+        res.render('home', {title: 'Home',teamSize:user._teams.length})
     })
 }
 const User = mongoose.model('User', UserSchema);

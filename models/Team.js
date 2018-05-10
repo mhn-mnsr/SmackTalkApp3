@@ -48,7 +48,7 @@ TeamSchema.statics.getAdminTeams = function (id, callback) {
 }
 
 TeamSchema.statics.getUserTeams = function (id, callback) {
-    Team.find({ _members: id },(err,data)=>console.log(data))
+    Team.find({ _members: id },callback)
         // .select('_id _members teamName')
         // .populate('_members')
         // .exec(callback)
