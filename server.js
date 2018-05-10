@@ -37,7 +37,7 @@ app.use('/public',express.static(path.join(__dirname, 'public')));
 app.use('/js',express.static(path.join(__dirname, 'public/js')));
 app.use('/css',express.static(path.join(__dirname, 'public/css')));
 app.use('/img',express.static(path.join(__dirname, 'public/img')));
-
+ 
 app.use(bodyParser.json())
 app.use(requestIp.mw())
 app.use(express.static(__dirname + '/client/dist'));

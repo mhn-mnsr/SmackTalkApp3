@@ -81,7 +81,7 @@ $(document).ready(() => {
             scrollBottom()
         })
     )
-    socket = io.connect('http://localhost:8000')
+    socket = io.connect('http://192.168.2.148:8000')
     socket.on('message', message => {
         updateMessage(message)
     })
